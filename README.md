@@ -11,6 +11,7 @@ how to think, not what to think.
 - [Press Release](docs/press-release.md)
 - [Product Requirements Document](docs/prd.md)
 - [High Level Design](docs/hld.md)
+-  [Low Level Design](docs/lld.md)
 
 ## Tech Stack
 - Frontend: React + Vercel
