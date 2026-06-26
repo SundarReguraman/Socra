@@ -1,7 +1,3 @@
-Here is the document converted into Markdown format, optimized for GitHub. You can copy and paste the following content directly into your `LLD.md` file.
-
------
-
 # Socra - Low Level Design (LLD)
 
 ## Section 1 — API Endpoints
