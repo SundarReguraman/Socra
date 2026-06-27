@@ -202,6 +202,22 @@ class SessionHistoryResponse(BaseModel):
 
 ## Section 4 — Strategy Engine Logic
 
+### Strategy Response Matrix
+The table below maps the strategy engine's decision-making logic, showing how the response type and boundary rules change based on the student's current state and specific hint levels.
+
+| Current State / Metric | Condition / Context | Response Type | LLM Boundary Rule (System Prompt Action) |
+| :--- | :--- | :--- | :--- |
+| **Progress Score $\ge$ Threshold** | High or Incremental Progress | `GUIDING_QUESTION` | Analyze history for the active stage. Ask exactly one forward-moving conceptual question. |
+| **Stuck Count < Max** | No Progress / Student Circling | `CLARIFYING_PROBE` | The student is circling. Ask them to isolate inputs/outputs or restate their assumption. |
+| **Hint Level = 1** | First persistent roadblock | `HINT` | Ask a reflective question tracking what they have tried so far step-by-step. |
+| **Hint Level = 2** | Second persistent roadblock | `HINT` | Point out a structural observation regarding input constraints or bounds. |
+| **Hint Level = 3** | Third persistent roadblock | `HINT` | Deliver a directional nudge orienting them toward output traits. |
+| **Hint Level = 4** | Fourth persistent roadblock | `HINT` | Ask a near-explicit question naming optimal complexities. |
+| **Hint Level = 5** | Max hints exhausted | `EXUANCE RULE` | Provide a clear text explanation of the algorithm approach. Still do not write raw code. |
+
+---
+
+
 ``` python
 def run_strategy_engine(session_context, latest_progress_score):
     # 1. Read existing state variables
@@ -265,6 +281,22 @@ def generate_prompt_boundary_rules(stage, response_type, hint_level):
 -----
 
 ## Section 5 — Progress Evaluator
+
+### Evaluation Rules Summary
+The table below illustrates the hierarchy of rules used by the evaluator to parse the student's message and determine their progress score (from 0 to 3).
+
+| Assigned Score | Progress Classification | Key Rules & Conditions | Code Implementation Details / Keywords |
+| :---: | :--- | :--- | :--- |
+| **3** | Breakthrough Conditions | Stage-specific functional check evaluates to `True` | Matches current `active_stage` helper:<br>• **UC1:** `student_has_isolated_io_bounds`<br>• **UC2:** `student_has_derived_brute_force`<br>• **UC3:** `student_has_isolated_bottleneck`<br>• **UC4:** `student_has_named_correct_dsa_pattern`<br>• **UC5:** `student_has_mapped_optimal_implementation` |
+| **2** | Conceptual Progress | Student mentions explicit pattern terms | Matches keywords listed in `problem_metadata.optimal_pattern_keywords` |
+| **1** | Structural Exploration | Student explores boundary limits | Matches array/limit keywords:<br>`"constraint"`, `"size"`, `"array length"`, `"index"`, `"what if"`, `"negative"` |
+| **0** | Capitulation / No Progress | Explicit expression of confusion or fallback case | Matches phrases like `"i don't know"`, `"i'm stuck"`, `"no idea"`, `"help me"`, `"clueless"`, `"confused"` (or falls through all other rules) |
+
+---
+
+
+
+
 
 ``` python
 def evaluate_student_progress(student_message, active_stage, problem_metadata):
