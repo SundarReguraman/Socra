@@ -37,6 +37,8 @@ All system specifications, foundational narratives, and architectural designs ar
 * [Product Requirements Document](docs/prd.md) — Core features, user personas, and product scope.
 * [High-Level Design](docs/hld.md) — System architecture, sequence diagrams, and block components.
 * [Low-Level Design](docs/lld.md) — Exact API contracts, Pydantic data validation schemas, database layout, and state machine algorithms.
+* [Entity Relationship Diagram](docs/erd.md) — Database layout schemas, data types, and primary/foreign key connections.
+* [API Contracts](docs/api_contracts.md) — Structural endpoint constraints, payloads, and response expectations.
 
 ---
 
