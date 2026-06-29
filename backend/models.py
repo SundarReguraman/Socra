@@ -17,7 +17,7 @@ class Session(Base):
     __tablename__ = "sessions"
 
     id = Column(UUID(as_uuid = True), primary_key = True, default = uuid.uuid4)
-    user_id = Column(UUID(as_uuid = True),ForeignKey("users.id"), nullable = False)
+    user_id = Column(UUID(as_uuid = True),ForeignKey("users.id"), nullable = True)
     problem_text = Column(Text, nullable = False)
     current_hint_level = Column(Integer, nullable = False, default = 1)
     status = Column(String, nullable = False, default = "active")
