@@ -24,13 +24,25 @@ class MessageResponse(BaseModel):
     session_status: str
 
 class MessageModel(BaseModel):
-    role: str
+    id: UUID
+    sender: str
     content: str
+    hint_level_at_time: Optional[int]
+    progress_score: Optional[int]
     created_at: datetime
 
+    class Config:
+        from_attributes = True
+
 class SessionHistoryResponse(BaseModel):
-    session_id: UUID
+    id: UUID
     problem_text: str
+    current_hint_level: int
     status: str
+    created_at: datetime
     messages: list[MessageModel]
+
+    class Config:
+        from_attributes = True
+        
 

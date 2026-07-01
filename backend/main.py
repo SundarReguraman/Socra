@@ -49,3 +49,21 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
         "hint_level": new_session.current_hint_level,
         "session_status": new_session.status
     }
+
+
+
+@app.get("/v1/session/{id}", response_model = schemas.SessionHistoryResponse, status_code = status.HTTP_200_OK)
+def retrieve_session(id: UUID, db: Session = Depends(get_db)):
+    session_record = db.query(models.Session).filter(models.Session.id == id).first()
+
+    if not session_record:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail =f"Session with id {id} was not found"
+        )
+    
+    return session_record
+
+
+
+     

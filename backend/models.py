@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Integer, ForeignKey, Text
 from datetime import datetime, timezone
+from sqlalchemy.orm import relationship
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -23,7 +24,9 @@ class Session(Base):
     status = Column(String, nullable = False, default = "active")
     created_at = Column(DateTime, nullable = False, default = lambda: datetime.now(timezone.utc))
 
-class Messages(Base):
+    messages = relationship("Message", backref="session")
+
+class Message(Base):
     __tablename__ = "messages"
 
     id = Column(UUID(as_uuid = True), primary_key= True, default= uuid.uuid4)
