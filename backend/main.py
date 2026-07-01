@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
+from datetime import datetime, timezone
 
 from database import engine, get_db
 import models
@@ -30,7 +31,7 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
 
     first_question = "What is the question asking you to do, break it down into your own words"
 
-    first_message = models.Messages(
+    first_message = models.Message(
         session_id = new_session.id,
         sender = "coach",
         content = first_question,
@@ -44,7 +45,7 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
 
     return {
         "session_id": new_session.id,
-        "role": "coach",
+        "sender": "coach",
         "content": first_question,
         "hint_level": new_session.current_hint_level,
         "session_status": new_session.status
@@ -63,6 +64,58 @@ def retrieve_session(id: UUID, db: Session = Depends(get_db)):
         )
     
     return session_record
+
+@app.post("/v1/session/{id}/message", response_model = schemas.MessageResponse, status_code = status.HTTP_200_OK )
+def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depends(get_db)):
+    session_record = db.query(models.Session).filter(models.Session.id == id).first()
+
+    if not session_record:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Session not found"
+
+        )
+
+
+
+
+    user_message = models.Message(
+        session_id = id,
+        sender = "user",
+        content = request.content,
+        progress_score = 0,
+        hint_level_at_time = session_record.current_hint_level, 
+        created_at = datetime.now(timezone.utc)
+
+    )
+
+    db.add(user_message)
+
+    socra_question = "Okay what are the input contstraints of the problem, look closely at it"
+
+    socra_message = models.Message(
+        session_id = id,
+        sender = "coach",
+        content = socra_question,
+        progress_score = None,
+        hint_level_at_time = session_record.current_hint_level,
+        created_at = datetime.now(timezone.utc)
+    )
+
+    db.add(socra_message)
+    db.commit()
+    
+
+    return{
+        "role":"coach",
+        "content":socra_question,
+        "hint_level": session_record.current_hint_level,
+        "session_status":"active"
+
+    }
+
+
+
 
 
 

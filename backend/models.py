@@ -24,7 +24,7 @@ class Session(Base):
     status = Column(String, nullable = False, default = "active")
     created_at = Column(DateTime, nullable = False, default = lambda: datetime.now(timezone.utc))
 
-    messages = relationship("Message", backref="session")
+    messages = relationship("Message", back_populates="session")
 
 class Message(Base):
     __tablename__ = "messages"
@@ -36,6 +36,8 @@ class Message(Base):
     progress_score = Column(Integer, nullable = True)
     hint_level_at_time = Column(Integer, nullable = True)
     created_at = Column(DateTime, nullable = False, default = lambda: datetime.now(timezone.utc))
+
+    session = relationship("Session", back_populates = "messages")
     
 
 
