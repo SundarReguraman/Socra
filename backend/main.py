@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
 from datetime import datetime, timezone
+from strategy_engine import get_next_response
 
 from database import engine, get_db
 import models
@@ -29,7 +30,11 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
     db.commit()
     db.refresh(new_session)
 
-    first_question = "What is the question asking you to do, break it down into your own words"
+    first_question = get_next_response(
+        problem_text = request.problem_text,
+        messages = [],
+        hint_level= 1
+    )
 
     first_message = models.Message(
         session_id = new_session.id,
@@ -45,7 +50,7 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
 
     return {
         "session_id": new_session.id,
-        "sender": "coach",
+        "role": "coach",
         "content": first_question,
         "hint_level": new_session.current_hint_level,
         "session_status": new_session.status
@@ -91,12 +96,19 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
 
     db.add(user_message)
 
-    socra_question = "Okay what are the input contstraints of the problem, look closely at it"
+    #Get the Entire Conversation_History
+    messages = db.query(models.Message).filter(models.Message.id == id).order_by(models.Message.created_at).all()
+    socra_response = get_next_response(
+        problem_text = session_record.problem_text,
+        messages= messages,
+        hint_level = session_record.current_hint_level
+    )
 
+    #Get next Response from Strategy Engine
     socra_message = models.Message(
         session_id = id,
         sender = "coach",
-        content = socra_question,
+        content = socra_response,
         progress_score = None,
         hint_level_at_time = session_record.current_hint_level,
         created_at = datetime.now(timezone.utc)
@@ -108,7 +120,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
 
     return{
         "role":"coach",
-        "content":socra_question,
+        "content":socra_response,
         "hint_level": session_record.current_hint_level,
         "session_status":"active"
 
