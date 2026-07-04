@@ -1,7 +1,7 @@
 # Product Requirements Document (PRD) — Socra v1
 
 ## Problem Statement
-Students learn Data Structures and Algorithms (DSA) concepts thoroughly, but when it comes to actually solving an unseen problem and figuring out the most optimal approach, they struggle. After trying for a while and being unable to come up with an approach, they resort to watching tutorials or asking standard AIs to hand them the logic.
+Students learn Data Structures and Algorithms (DSA) concepts thoroughly, but when it comes to actually solving an unseen problem and figuring out the most optimal approach, they struggle. After trying for a while and being unable to come up with an approach, they resort to using existing tools like ChatGPT and online editorials solve this by giving the answer directly — which bypasses the thinking process entirely and leaves the cognitive gap unaddressed.
 
 This loop inhibits students from independently deriving solutions — which is the exact process through which logical thinking is developed. This skill is non-negotiable for landing roles at FAANG and top-tier big tech companies.
 
@@ -49,17 +49,30 @@ This loop inhibits students from independently deriving solutions — which is t
 ## Product Scope
 
 ### In-Scope (v1)
-1. **Problem Ingestion:** Users paste the Leetcode problem along with input constraints and example cases. Socra parses this to use as the baseline foundation for the session.
-2. **Session Management:** Keeps track of the chat history within a single session to monitor progress and ensure the user is not moving in circles.
-3. **Adaptive Questioning:** The brain of Socra. It evaluates successive user responses, maps their forward progress or deviations relative to the optimal solution, and asks tailored guiding questions.
-4. **Hint System:** An escalating 5-level hint workflow triggered if a user remains stuck:
-   * *Level 1:* Reflective Hint
-   * *Level 2:* Observational Hint
-   * *Level 3:* Directional Nudge
-   * *Level 4:* Partially Explicit Hint
-   * *Level 5:* Fully Explicit Hint (reveals the approach logic)
-5. **Progress Tracking:** Monitors the momentum from the first exchange to the last, feeding data back into the adaptive questioning engine to trigger hints if stagnation is detected.
-6. **Session Conclusion:** Handles clean termination states — celebrating when a user reaches the optimal approach or managing fallback mechanisms when explicit hints become a necessity.
+In Scope
+User-Facing Features
+   Problem Ingestion: Users paste the LeetCode problem along with input constraints and example cases. Socra parses this to use as the baseline foundation for the session.
+
+   Adaptive Questioning: The brain of Socra. It evaluates successive user responses, maps their forward progress or deviations relative to the optimal solution, and asks tailored guiding questions.
+
+   Hint System: An escalating 5-level hint workflow triggered if a user remains stuck:
+
+   Level 1: Reflective Hint
+
+   Level 2: Observational Hint
+
+   Level 3: Directional Nudge
+
+   Level 4: Partially Explicit Hint
+
+   Level 5: Fully Explicit Hint (reveals the approach logic)
+
+   Session Conclusion: Handles clean termination states—celebrating when a user reaches the optimal approach or managing fallback mechanisms when explicit hints become a necessity.
+
+System Components
+   Session Management: Keeps track of the chat history within a single session to monitor progress and ensure the user is not moving in circles.
+
+   Progress Tracking: Monitors the momentum from the first exchange to the last, feeding data back into the adaptive questioning engine to trigger hints if stagnation is detected.
 
 ### Out of Scope (v1)
 * **Cross-session memory & analytics:** Remembering solved problems or tracking multi-session metrics.
