@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 from datetime import datetime, timezone
 from strategy_engine import get_next_response
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine, get_db
 import models
@@ -12,6 +13,14 @@ models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI(title="Socra AI Reasoning Coach API", version ="1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["https://localhost:5174"],
+    allow_credentials = True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
