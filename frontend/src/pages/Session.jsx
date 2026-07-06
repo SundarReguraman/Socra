@@ -37,7 +37,7 @@ function Session() {
 
         try{
             const response = await sendMessage(id, input)
-            setMessage(prev => [...prev, {
+            setMessages(prev => [...prev, {
                 role: "coach",
                 content: response.content
             }])
@@ -62,7 +62,7 @@ function Session() {
     return (
         <div className = "session">
             <div className="chat-window">
-                {message.map((msg, index) => (
+                {messages.map((msg, index) => (
                     <MessageBubble key = {index} role={msg.role} content= {msg.content} />
                 ))}
                 {loading && <div className = "loading"> Socra is thinking...</div>}

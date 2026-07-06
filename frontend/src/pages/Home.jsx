@@ -16,7 +16,7 @@ function Home() {
 
         try {
             const session = await createSession(problemText)
-            navigate('/session/${session.id}', {
+            navigate(`/session/${session.session_id}`, {
                 state:{
                     firstQuestion: session.content,
                     hintLevel: session.hint_level
