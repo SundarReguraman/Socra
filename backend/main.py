@@ -4,7 +4,8 @@ from uuid import UUID
 from datetime import datetime, timezone
 from strategy_engine import get_next_response
 from fastapi.middleware.cors import CORSMiddleware
-
+from session_service import get_session_with_messages, store_message
+from progress_evaluator import evaluate_progress
 from database import engine, get_db
 import models
 import schemas
@@ -81,57 +82,66 @@ def retrieve_session(id: UUID, db: Session = Depends(get_db)):
 
 @app.post("/v1/session/{id}/message", response_model = schemas.MessageResponse, status_code = status.HTTP_200_OK )
 def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depends(get_db)):
-    session_record = db.query(models.Session).filter(models.Session.id == id).first()
+    
+    session, messages = get_session_with_messages(id, db)
 
-    if not session_record:
+    if not session:
         raise HTTPException(
             status_code = status.HTTP_404_NOT_FOUND,
             detail = "Session not found"
 
         )
-
-
-
-
-    user_message = models.Message(
+    
+    store_message(
         session_id = id,
-        sender = "user",
+        sender = "student",
         content = request.content,
-        progress_score = 0,
-        hint_level_at_time = session_record.current_hint_level, 
-        created_at = datetime.now(timezone.utc)
-
+        hint_level = None,
+        progress_score = None,
+        db=db
+    )
+    
+    
+    progress_score = evaluate_progress(
+        problem_text = session.problem_text,
+        messages=messages,
+        student_response = request.content
     )
 
-    db.add(user_message)
+    if progress_score == 0:
+        session.consectuive_stuck = (session.consecutive_stuck or 0) + 1
+        if session.consecutive_stuck >= 2:
+            session.current_hint_level = min(session.current_hint_level + 1, 5)
+            session.consecutive_stuck = 0
+    else:
+        session.consecutive_stuck = 0
 
-    #Get the Entire Conversation_History
-    messages = db.query(models.Message).filter(models.Message.id == id).order_by(models.Message.created_at).all()
+    db.commit()
+
+    _, updated_messages = get_session_with_messages(id, db)
+
+
     socra_response = get_next_response(
-        problem_text = session_record.problem_text,
-        messages= messages,
-        hint_level = session_record.current_hint_level
+        problem_text = session.problem_text,
+        messages= updated_messages,
+        hint_level = session.current_hint_level
     )
 
-    #Get next Response from Strategy Engine
-    socra_message = models.Message(
+    store_message(
         session_id = id,
         sender = "coach",
-        content = socra_response,
+        content = coach_response,
+        hint_level = session.current_hint_level,
         progress_score = None,
-        hint_level_at_time = session_record.current_hint_level,
-        created_at = datetime.now(timezone.utc)
+        db = db
     )
 
-    db.add(socra_message)
-    db.commit()
-    
 
     return{
         "role":"coach",
         "content":socra_response,
-        "hint_level": session_record.current_hint_level,
-        "session_status":"active"
+        "hint_level": session.current_hint_level,
+        "session_status": session.status
 
     }
 
