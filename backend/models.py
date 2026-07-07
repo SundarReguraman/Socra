@@ -21,6 +21,7 @@ class Session(Base):
     user_id = Column(UUID(as_uuid = True),ForeignKey("users.id"), nullable = True)
     problem_text = Column(Text, nullable = False)
     current_hint_level = Column(Integer, nullable = False, default = 1)
+    consecutive_stuck = Column(Integer, nullable = True, default = 0)
     status = Column(String, nullable = False, default = "active")
     created_at = Column(DateTime, nullable = False, default = lambda: datetime.now(timezone.utc))
 
