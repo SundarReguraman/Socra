@@ -1,8 +1,9 @@
 from llm_gateway import get_llm_response
 
 def evaluate_progress(problem_text: str, messages: list, student_response:str) -> int:
+    recent_messages = messages[-8:]
     conversation_history = ""
-    for message in messages:
+    for message in recent_messages:
         role = "Student" if message.sender == "student" else "Socra"
         conversation_history += f"{role}: {message.content}\n"
 

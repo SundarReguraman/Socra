@@ -27,8 +27,7 @@ function Session() {
     }, [messages])
 
     async function handleSend() {
-        
-        if(!input.trim()) return
+        if (loading || !input.trim()) return
 
         const studentMessage = { role: "student", content: input }
         setMessages(prev => [...prev, studentMessage])
@@ -53,6 +52,8 @@ function Session() {
     }
 
     function handleKeyDown(e) {
+        if (loading) return
+
         if (e.key == "Enter" && !e.shiftKey) {
             e.preventDefault()
             handleSend()

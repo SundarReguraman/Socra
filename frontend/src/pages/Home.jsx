@@ -9,7 +9,7 @@ function Home() {
     const navigate = useNavigate()
 
     async function handleStart() {
-        if(!problemText.trim()) return 
+        if (loading || !problemText.trim()) return 
 
         setLoading(true)
         setError(null)

@@ -7,6 +7,13 @@ from google.genai import errors
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+
+def should_retry(error) -> bool:
+    status_code = getattr(error, "code", None)
+    return status_code in {429, 500, 502, 503, 504}
+
+
 def get_llm_response(structured_prompt: str) -> str:
     model_name = "gemini-2.5-flash"
     max_retries = 3
@@ -21,6 +28,9 @@ def get_llm_response(structured_prompt: str) -> str:
             return response.text
             
         except (errors.APIError, errors.ClientError) as e:
+            if not should_retry(e):
+                raise e
+
             # If it's the last attempt, raise the error to be handled by your endpoint
             if attempt == max_retries - 1:
                 print(f"Gemini API failed permanently after {max_retries} attempts.")

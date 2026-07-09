@@ -1,10 +1,15 @@
 from sqlalchemy.orm import Session
 import models
 
-def get_session_with_messages(session_id, db: Session):
-    session = db.query(models.Session).filter(
+def get_session_with_messages(session_id, db: Session, lock: bool = False):
+    session_query = db.query(models.Session).filter(
         models.Session.id == session_id
-    ).first()
+    )
+
+    if lock:
+        session_query = session_query.with_for_update()
+
+    session = session_query.first()
 
     if not session:
         return None, None

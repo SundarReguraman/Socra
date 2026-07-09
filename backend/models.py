@@ -34,6 +34,7 @@ class Message(Base):
     session_id = Column(UUID(as_uuid = True), ForeignKey("sessions.id"), nullable = False)
     sender = Column(String, nullable = False)
     content = Column(Text, nullable = False)
+    consecutive_stuck = Column(Integer, nullable = True, default = 0)
     progress_score = Column(Integer, nullable = True)
     hint_level_at_time = Column(Integer, nullable = True)
     created_at = Column(DateTime, nullable = False, default = lambda: datetime.now(timezone.utc))

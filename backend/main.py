@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import inspect, text
 from uuid import UUID
 from datetime import datetime, timezone
 from strategy_engine import get_next_response
@@ -11,6 +12,34 @@ import models
 import schemas
 
 models.Base.metadata.create_all(bind=engine)
+
+
+def ensure_session_schema() -> None:
+    inspector = inspect(engine)
+    if not inspector.has_table("sessions"):
+        return
+
+    session_columns = {column["name"] for column in inspector.get_columns("sessions")}
+    if "consecutive_stuck" not in session_columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE sessions ADD COLUMN consecutive_stuck INTEGER DEFAULT 0"))
+
+
+ensure_session_schema()
+
+
+def ensure_message_schema() -> None:
+    inspector = inspect(engine)
+    if not inspector.has_table("messages"):
+        return
+
+    message_columns = {column["name"] for column in inspector.get_columns("messages")}
+    if "consecutive_stuck" not in message_columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE messages ADD COLUMN consecutive_stuck INTEGER DEFAULT 0"))
+
+
+ensure_message_schema()
 
 
 app = FastAPI(title="Socra AI Reasoning Coach API", version ="1.0")
@@ -83,7 +112,7 @@ def retrieve_session(id: UUID, db: Session = Depends(get_db)):
 @app.post("/v1/session/{id}/message", response_model = schemas.MessageResponse, status_code = status.HTTP_200_OK )
 def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depends(get_db)):
     
-    session, messages = get_session_with_messages(id, db)
+    session, messages = get_session_with_messages(id, db, lock=True)
 
     if not session:
         raise HTTPException(
@@ -91,7 +120,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
             detail = "Session not found"
 
         )
-    
+    print("\n--- NEW REQUEST RECEIVED ---")
     store_message(
         session_id = id,
         sender = "student",
@@ -101,7 +130,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
         db=db
     )
     
-    
+    print("1. Calling Progress Evaluator...")
     progress_score = evaluate_progress(
         problem_text = session.problem_text,
         messages=messages,
@@ -109,7 +138,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
     )
 
     if progress_score == 0:
-        session.consectuive_stuck = (session.consecutive_stuck or 0) + 1
+        session.consecutive_stuck = (session.consecutive_stuck or 0) + 1
         if session.consecutive_stuck >= 2:
             session.current_hint_level = min(session.current_hint_level + 1, 5)
             session.consecutive_stuck = 0
@@ -120,7 +149,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
 
     _, updated_messages = get_session_with_messages(id, db)
 
-
+    print(f"2. Evaluator finished. Score: {progress_score}. Calling Strategy Engine...")
     socra_response = get_next_response(
         problem_text = session.problem_text,
         messages= updated_messages,
@@ -130,12 +159,13 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
     store_message(
         session_id = id,
         sender = "coach",
-        content = coach_response,
+        content = socra_response,
         hint_level = session.current_hint_level,
         progress_score = None,
         db = db
     )
 
+    print("3. Strategy Engine finished! Returning response to frontend.")
 
     return{
         "role":"coach",
