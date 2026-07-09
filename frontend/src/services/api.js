@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8000"
+const BASE_URL = "https://socra-production-31c5.up.railway.app"
 
 export async function createSession(problemText) {
     const response = await fetch(`${BASE_URL}/v1/session`, {
