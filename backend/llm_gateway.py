@@ -8,14 +8,13 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-
 def should_retry(error) -> bool:
     status_code = getattr(error, "code", None)
     return status_code in {429, 500, 502, 503, 504}
 
-
 def get_llm_response(structured_prompt: str) -> str:
-    model_name = "gemini-2.5-flash"
+    # 1. Swap to 1.5-flash for the massive free tier limits
+    model_name = "gemini-1.5-flash"
     max_retries = 3
     initial_delay = 2
 
@@ -29,14 +28,16 @@ def get_llm_response(structured_prompt: str) -> str:
             
         except (errors.APIError, errors.ClientError) as e:
             if not should_retry(e):
-                raise e
+                # Shield the frontend from non-rate-limit crashes
+                print(f"Non-retryable error: {e}")
+                return "My circuits got a bit crossed trying to read that. Could you rephrase your answer?"
 
-            # If it's the last attempt, raise the error to be handled by your endpoint
             if attempt == max_retries - 1:
                 print(f"Gemini API failed permanently after {max_retries} attempts.")
-                raise e
+                # 2. Return a safe string to the UI instead of crashing the server
+                return "I'm experiencing a bit of heavy traffic right now! Give me about 30 seconds to catch my breath and hit send again."
             
-            # Calculate backoff delay (e.g., 2s, 4s, 8s) to give the server breathing room
             delay = initial_delay * (2 ** attempt)
-            print(f"Gemini overloaded or rate-limited (Status {e.code}). Retrying in {delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+            status = getattr(e, "code", "Unknown")
+            print(f"Gemini overloaded (Status {status}). Retrying in {delay} seconds... (Attempt {attempt + 1}/{max_retries})")
             time.sleep(delay)
