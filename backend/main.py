@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect, text
 from uuid import UUID
+from auth import verify_user
 from datetime import datetime, timezone
 from strategy_engine import get_next_response
 from fastapi.middleware.cors import CORSMiddleware
@@ -176,8 +177,6 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
         "session_status": session.status
 
     }
-
-
 
 
 
