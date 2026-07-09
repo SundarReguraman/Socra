@@ -11,7 +11,7 @@ function Home() {
     const textareaRef = useRef(null)
 
     async function handleGo() {
-        if (!problemText.trim()) return
+        if (loading || !problemText.trim()) return
         setLoading(true)
         setError(null)
         try {

@@ -16,8 +16,9 @@ We have officially transitioned from the documentation phase to active engineeri
 - [x] Product Requirements Document (PRD)
 - [x] High-Level Design (HLD)
 - [x] Low-Level Design (LLD)
-- [ ] Backend Implementation (FastAPI + Supabase)
-- [ ] Frontend Implementation (React + Vercel)
+- [x] Backend API & Database Implementation (FastAPI + Supabase)
+- [x] Prompt Engineering & State Management 
+- [ ] Frontend UI Integration (React + Vercel)
 
 ---
 
@@ -26,7 +27,7 @@ We have officially transitioned from the documentation phase to active engineeri
 * **Frontend:** React, Tailwind CSS (Hosted on Vercel)
 * **Backend:** FastAPI, Python (Hosted on Railway)
 * **Database:** PostgreSQL, Supabase
-* **LLM Engine:** Anthropic Claude (via API wrapper)
+* **LLM Engine:** Google Gemini API (`gemini-1.5-flash`)
 
 ---
 
@@ -45,60 +46,52 @@ All system specifications, foundational narratives, and architectural designs ar
 ## 💻 Local Development Setup
 
 ### Backend (FastAPI)
-1. Navigate to the backend folder:
+
+1. **Navigate to the backend folder:**
    ```bash
    cd backend
-Here is the content converted into a clean Markdown format for your documentation:
+   ```
 
-```` markdown
-### Backend (Python)
-
-1. **Create and activate a virtual environment:**
+2. **Create and activate a virtual environment:**
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-````
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2.  **Install dependencies:**
-    
-    ``` bash
-    pip install -r requirements.txt
-    
-    ```
+4. **Environment Variables:**
+   Create a `.env` file in the root of the `backend/` directory and add your secure keys:
+   ```env
+   DATABASE_URL="your_supabase_postgres_connection_string"
+   GEMINI_API_KEY="your_google_ai_studio_key"
+   ```
 
-3.  **Run the development server:**
-    
-    ``` bash
-    python manage.py runserver
-    
-    ```
+5. **Run the development server:**
+   ```bash
+   uvicorn main:app --reload
+   ```
+   *The server will start at `http://localhost:8000`.*
+
+---
 
 ### Frontend (React)
 
-1.  **Navigate to the frontend folder:**
-    
-    ``` bash
-    cd frontend
-    
-    ```
+1. **Navigate to the frontend folder:**
+   ```bash
+   cd frontend
+   ```
 
-2.  **Install the node packages:**
-    
-    ``` bash
-    npm install
-    
-    ```
+2. **Install the node packages:**
+   ```bash
+   npm install
+   ```
 
-3.  **Start the local server:**
-    
-    ``` bash
-    npm start
-    
-    ```
-
-<!-- end list -->
-
-``` 
- 
-```
+3. **Start the local server:**
+   ```bash
+   npm start
+   ```
+   *Ensure your local API fetch URL is pointing to `http://localhost:8000` to interact with the local backend!*
