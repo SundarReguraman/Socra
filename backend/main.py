@@ -156,7 +156,8 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
     socra_response = get_next_response(
         problem_text = session.problem_text,
         messages= updated_messages,
-        hint_level = session.current_hint_level
+        hint_level = session.current_hint_level,
+        score = session.score
     )
 
     store_message(
