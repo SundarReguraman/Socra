@@ -121,14 +121,6 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
 
         )
     print("\n--- NEW REQUEST RECEIVED ---")
-    store_message(
-        session_id = id,
-        sender = "student",
-        content = request.content,
-        hint_level = None,
-        progress_score = None,
-        db=db
-    )
     
     print("1. Calling Progress Evaluator...")
     progress_score = evaluate_progress(
@@ -137,6 +129,17 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
         student_response = request.content
     )
 
+    
+    store_message(
+        session_id = id,
+        sender = "student",
+        content = request.content,
+        hint_level = None,
+        progress_score = progress_score, 
+        db=db
+    )
+
+    
     if progress_score == 0:
         session.consecutive_stuck = (session.consecutive_stuck or 0) + 1
         if session.consecutive_stuck >= 2:
@@ -146,7 +149,6 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
         session.consecutive_stuck = 0
 
     db.commit()
-
     _, updated_messages = get_session_with_messages(id, db)
 
     print(f"2. Evaluator finished. Score: {progress_score}. Calling Strategy Engine...")
