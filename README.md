@@ -27,7 +27,7 @@ We have officially transitioned from the documentation phase to active engineeri
 * **Frontend:** React, Tailwind CSS (Hosted on Vercel)
 * **Backend:** FastAPI, Python (Hosted on Railway)
 * **Database:** PostgreSQL, Supabase
-* **LLM Engine:** Google Gemini API (`gemini-1.5-flash`)
+* **LLM Engine:** Google Gemini API (`gemini-2.5-flash`)
 
 ---
 
