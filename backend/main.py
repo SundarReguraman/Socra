@@ -73,7 +73,9 @@ def create_session(request: schemas.SessionRequest, db: Session = Depends(get_db
     first_question = get_next_response(
         problem_text = request.problem_text,
         messages = [],
-        hint_level= 1
+        hint_level= 1,
+        progress_score = 0
+
     )
 
     first_message = models.Message(
