@@ -160,7 +160,7 @@ def send_message(id: UUID, request: schemas.MessageRequest, db: Session = Depend
         problem_text = session.problem_text,
         messages= updated_messages,
         hint_level = session.current_hint_level,
-        score = session.progress_score
+        score = progress_score
     )
 
     store_message(
