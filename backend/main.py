@@ -47,7 +47,7 @@ app = FastAPI(title="Socra AI Reasoning Coach API", version ="1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:5173", "https://localhost:5173","https://socra-ochre.vercel.app"],
+    allow_origins = os.getenv("ALLOWED_ORIGINS").split(","),
     allow_credentials = True,
     allow_methods=["*"],
     allow_headers=["*"],
