@@ -4,7 +4,7 @@ An AI-powered Socratic reasoning coach that helps students develop problem-solvi
 
 ## What is Socra?
 
-Socra guides students through complex DSA problems using adaptive questioning and a structured hint system—teaching them *how to think*, not *what to think*. Instead of handing out solutions, it evaluates user responses dynamically to offer contextual nudges or structural hints.
+Socra guides students through complex DSA problems using adaptive questioning and a structured hint system—teaching them *how to think*, not *what to think*. Instead of handing out solutions, it utilizes a **closed-loop state machine** to evaluate user responses dynamically, offering contextual nudges that advance students through logical problem-solving stages.
 
 ---
 
@@ -18,7 +18,7 @@ We have officially transitioned from the documentation phase to active engineeri
 - [x] Low-Level Design (LLD)
 - [x] Backend API & Database Implementation (FastAPI + Supabase)
 - [x] Prompt Engineering & State Management 
-- [ ] Frontend UI Integration (React + Vercel)
+- [x] Frontend UI Integration (React + Vercel)
 
 ---
 
@@ -27,7 +27,7 @@ We have officially transitioned from the documentation phase to active engineeri
 * **Frontend:** React, Tailwind CSS (Hosted on Vercel)
 * **Backend:** FastAPI, Python (Hosted on Railway)
 * **Database:** PostgreSQL, Supabase
-* **LLM Engine:** Google Gemini API (`gemini-1.5-flash`)
+* **LLM Engine:** Google Gemini API (`gemini-2.5-flash`)
 
 ---
 
