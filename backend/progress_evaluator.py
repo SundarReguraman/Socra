@@ -1,4 +1,6 @@
 from llm_gateway import get_llm_response
+import google.generativeai as genai
+import os
 
 def evaluate_progress(problem_text: str, messages: list, student_response:str) -> int:
     recent_messages = messages[-8:]
@@ -51,7 +53,7 @@ SCORING RUBRIC (Strictly adhere to these definitions):
 
 Return ONLY the integer: 0, 1, 2, or 3
 """
-    response = get_llm_response(prompt)
+    response = get_llm_response(prompt, GEMINI_API_KEY_EVALUATOR)
 
     try:
         score = int(response.strip())
