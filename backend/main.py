@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect, text
 from uuid import UUID
+import os
 from auth import verify_user
 from datetime import datetime, timezone
 from strategy_engine import get_next_response
@@ -47,7 +48,7 @@ app = FastAPI(title="Socra AI Reasoning Coach API", version ="1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:5173", "https://localhost:5173","https://socra-ochre.vercel.app"],
+    allow_origins=[origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,https://localhost:5173,https://socra-ochre.vercel.app").split(",") if origin.strip()],
     allow_credentials = True,
     allow_methods=["*"],
     allow_headers=["*"],
