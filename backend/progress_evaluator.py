@@ -52,7 +52,7 @@ SCORING RUBRIC (Strictly adhere to these definitions):
 
 Return ONLY the integer: 0, 1, 2, or 3
 """
-    response = get_llm_response(prompt, GEMINI_API_KEY_EVALUATOR)
+    response = get_llm_response(prompt,"GEMINI_API_KEY_EVALUATOR")
 
     try:
         score = int(response.strip())

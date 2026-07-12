@@ -46,5 +46,5 @@ Determine the student's current stage internally. Output ONLY the conversational
     return prompt
 def get_next_response(problem_text: str, messages: list, hint_level: int, progress_score: int) -> str:
     prompt = build_prompt(problem_text, messages, hint_level, progress_score)
-    return get_llm_response(prompt,GEMINI_API_KEY_COACH)
+    return get_llm_response(prompt,"GEMINI_API_KEY_COACH")
 

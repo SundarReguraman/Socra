@@ -13,13 +13,12 @@ def should_retry(error) -> bool:
     return status_code in {429, 500, 502, 503, 504}
 
 def get_llm_response(structured_prompt: str, api_key_name: str) -> str:
-    # 1. Swap to 1.5-flash for the massive free tier limits
     model_name = "gemini-2.5-flash"
     max_retries = 3
     initial_delay = 2
 
     current_key = os.getenv(api_key_name)
-    client = genai.Client(api_key= current_key)
+    client = genai.Client(api_key = current_key)
 
     for attempt in range(max_retries):
         try:
