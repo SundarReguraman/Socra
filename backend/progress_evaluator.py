@@ -1,5 +1,4 @@
 from llm_gateway import get_llm_response
-import google.generativeai as genai
 import os
 
 def evaluate_progress(problem_text: str, messages: list, student_response:str) -> int:
