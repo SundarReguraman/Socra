@@ -24,12 +24,24 @@ We have officially transitioned from the documentation phase to active engineeri
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** React, Tailwind CSS (Hosted on Vercel)
-* **Backend:** FastAPI, Python (Hosted on Railway)
-* **Database:** PostgreSQL, Supabase
-* **LLM Engine:** Google Gemini API (`gemini-2.5-flash`)
+<div align="left">
 
----
+**Frontend:** React & Tailwind CSS (Hosted on Vercel) <br>
+<img src="https://skillicons.dev/icons?i=react,tailwind&theme=dark" alt="React and Tailwind" />
+<br><br>
+
+**Backend:** Python & FastAPI (Hosted on Railway) <br>
+<img src="https://skillicons.dev/icons?i=python,fastapi&theme=dark" alt="Python and FastAPI" />
+<br><br>
+
+**Database:** PostgreSQL & Supabase <br>
+<img src="https://skillicons.dev/icons?i=postgres,supabase&theme=dark" alt="PostgreSQL and Supabase" />
+<br><br>
+
+**LLM Engine:** Google Gemini API (`gemini-2.5-flash`) <br>
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white) 
+
+</div>
 
 ## 📂 Documentation & Blueprints
 
