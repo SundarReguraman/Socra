@@ -39,9 +39,10 @@ We have officially transitioned from the documentation phase to active engineeri
 <br><br>
 
 **LLM Engine:** Google Gemini API (`gemini-2.5-flash`) <br>
-![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white) 
+<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-gemini-icon.svg" width="48" height="48" alt="Google Gemini" />
 
 </div>
+
 
 ## 📂 Documentation & Blueprints
 
